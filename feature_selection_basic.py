@@ -49,12 +49,13 @@ data = data.iloc[:,10:]
 intensity_columns = filter(lambda x:"_intensity" in x,data.iloc[:,10:].columns)
 data.drop(intensity_columns,axis=1,inplace=True) # remove intensity columns
 
+# type of morphometric features
 attributes = ['_volume','_area','_thickness$','_thicknessstd','_foldind','_meancurv','_gauscurv','_all']
 # attributes = ['_volume','_area']
 skf = StratifiedKFold(y, n_folds=10,shuffle=True,random_state=np.random.seed(0))
 
-t0=time() 
-dict_for_attribute={}
+t0 = time() 
+dict_for_attribute = {}
 
 for attribute in attributes:
     print(attribute)
@@ -63,12 +64,13 @@ for attribute in attributes:
     if attribute is "_all":
         continue
     else:
+        # select the columns containing the attribute
         attribute_columns=filter(lambda x:re.search(attribute,x), data.iloc[:,10:].columns)
-        X=data[attribute_columns[:20]]
+        X = data[attribute_columns[:20]] # use only 20 mode paramteres
         
     remove_highly_correlated(X,threshold=0.98)
     print(X.columns.values)
-    list_dicts=list()
+    list_dicts = list()
     for train_index, test_index in skf:
         X_train, X_test = X.iloc[train_index], X.iloc[test_index]
         y_train, y_test = y[train_index], y[test_index]
