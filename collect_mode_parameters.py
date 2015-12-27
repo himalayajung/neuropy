@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 """
+collects mode parameters of the sub-cortical structures 
+from the segmentaton files outputted byFIRST
+
 Created on Tue Apr 21 12:00:40 2015
 
 @author: gajendrakatuwal
