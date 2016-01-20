@@ -23,8 +23,8 @@ import math
 
 np.random.seed(0)
 #%%
-pheno = pd.read_csv(os.path.join('..','..','data','ABIDE_IQ.csv'),index_col=0)
-pheno = pheno[['control','age','sex','site','VIQ','PIQ','FIQ','ADOS']]
+pheno = pd.read_csv(os.path.join('..', '..', 'data', 'ABIDE_IQ.csv'), index_col=0)
+pheno = pheno[['control', 'age', 'sex', 'site', 'VIQ', 'PIQ', 'FIQ', 'ADOS']]
 #print(pheno.describe())
 #mode_pars=pickle.load( open( "mode_parameters.p", "rb" ) )
 
@@ -42,8 +42,8 @@ sub_cortical_structures = ["BrStem","L_Accu","R_Accu","L_Amyg","R_Amyg","L_Caud"
 #sub_cortical_structures=["L_Hipp","R_Hipp"]
 #%%
 ## Feature Extraction
-feature_linearSVC = svm.LinearSVC(penalty="l1",dual=False)
-feature_RFECV = RFECV(feature_linearSVC,step=0.05,cv=10)
+feature_linearSVC = svm.LinearSVC(penalty="l1", dual=False)
+feature_RFECV = RFECV(feature_linearSVC, step=0.05, cv=10)
 #feature_PCA=PCA(n_components=n_components)
 #%%
 svc = svm.SVC()
@@ -73,15 +73,15 @@ for site in sites:
         mtry = np.sqrt(X.shape[1]).round()
     #    mtry=np.sqrt(n_components).round()
         rf = RandomForestClassifier(n_estimators=5000)
-        gbm = GradientBoostingClassifier(n_estimators=10000,learning_rate=0.001)
+        gbm = GradientBoostingClassifier(n_estimators=10000, learning_rate=0.001)
         # Parameter Grids
-        param_grid_rf = dict(max_features=np.arange(int(mtry-round(mtry/2)),int(mtry+round(mtry/2)), 2 ) )
+        param_grid_rf = dict(max_features=np.arange(int(mtry-round(mtry/2)), int(mtry+round(mtry/2)), 2 ) )
         param_grid_gbm = dict(max_depth= range(1,10))
     #    param_grid=dict(max_features=range(5,100,5))
         param_dist = {"max_features": sp_randint(5,100)}
-        random_search_rf = RandomizedSearchCV(rf,param_distributions=param_dist,n_iter=40)
+        random_search_rf = RandomizedSearchCV(rf, param_distributions=param_dist, n_iter=40)
         grid_search_rf = GridSearchCV(estimator = rf, param_grid = param_grid_rf, cv = 10) 
-        grid_search_gbm = GridSearchCV(estimator = gbm, param_grid =param_grid_gbm, cv = 10) 
+        grid_search_gbm = GridSearchCV(estimator = gbm, param_grid = param_grid_gbm, cv = 10) 
 
         pipe1 = Pipeline([('feature_selection', feature_linearSVC),
                          ('classification', grid_search_rf)])
@@ -105,5 +105,5 @@ for site in sites:
     df_scores.index=sub_cortical_structures
     list_dfs.append(df_scores) 
     
-df_scores_site = pd.concat(list_dfs,keys=sites,axis=0) # cbind    
+df_scores_site = pd.concat(list_dfs,vkeys=sites,vaxis=0) # cbind    
 pickle.dump(df_scores_site, open( "saved_runs/zernike_native_rf_accuracy_sitewise.p", "wb" ) )
